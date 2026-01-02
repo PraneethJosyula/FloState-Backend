@@ -1,0 +1,24 @@
+# Supabase Configuration Example
+# Copy this file to config.toml and fill in your project details
+
+[project]
+id = "your-project-id"
+name = "focusflow"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://yourdomain.com"]
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+major_version = 15
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
