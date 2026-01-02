@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "FocusFlow Express.js Backend API",
   "main": "dist/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
