@@ -1,5 +1,6 @@
 /**
  * Database Types for FocusFlow
+ * Compatible with @supabase/supabase-js v2
  */
 
 export interface Profile {
@@ -47,7 +48,7 @@ export interface Follow {
   created_at: string;
 }
 
-// Extended types
+// Extended types with joins
 export interface ActivityWithProfile extends Activity {
   profile: {
     username: string;
@@ -78,38 +79,50 @@ export interface ProfileWithStats extends Profile {
   is_following?: boolean;
 }
 
-// Database schema type for Supabase client
-export interface Database {
+// Simplified Database type that works with Supabase client
+export type Database = {
   public: {
     Tables: {
       profiles: {
         Row: Profile;
-        Insert: Omit<Profile, 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<Profile, 'id'>>;
+        Insert: Partial<Profile> & { id: string; username: string };
+        Update: Partial<Profile>;
+        Relationships: [];
       };
       activities: {
         Row: Activity;
-        Insert: Omit<Activity, 'id' | 'created_at' | 'share_count'>;
-        Update: Partial<Omit<Activity, 'id' | 'user_id'>>;
+        Insert: Partial<Activity> & { user_id: string; category: string; duration_minutes: number };
+        Update: Partial<Activity>;
+        Relationships: [];
       };
       likes: {
         Row: Like;
-        Insert: Omit<Like, 'created_at'>;
-        Update: never;
+        Insert: { activity_id: string; user_id: string };
+        Update: Partial<Like>;
+        Relationships: [];
       };
       comments: {
         Row: Comment;
-        Insert: Omit<Comment, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Pick<Comment, 'text'>>;
+        Insert: Partial<Comment> & { activity_id: string; user_id: string; text: string };
+        Update: Partial<Comment>;
+        Relationships: [];
       };
       follows: {
         Row: Follow;
-        Insert: Omit<Follow, 'created_at'>;
-        Update: never;
+        Insert: { follower_id: string; following_id: string };
+        Update: Partial<Follow>;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
-}
+};
+
+// Helper type for query results
+export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
 
 // Request types
 export interface CreateActivityInput {
@@ -143,4 +156,3 @@ export interface FeedOptions {
   limit?: number;
   filter?: 'following' | 'global';
 }
-

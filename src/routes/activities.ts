@@ -2,7 +2,6 @@ import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { requireAuth, optionalAuth } from '../middleware/auth.js';
 import { supabaseAdmin } from '../lib/supabase.js';
-import type { ActivityWithProfile } from '../types/database.js';
 
 const router = Router();
 
@@ -143,13 +142,9 @@ router.get('/feed', optionalAuth, async (req: Request, res: Response) => {
     });
 
     // Transform response
-    const data: ActivityWithProfile[] = activities.map(activity => ({
+    const data = activities.map((activity: any) => ({
       ...activity,
-      profile: activity.profile as {
-        username: string;
-        full_name: string | null;
-        avatar_url: string | null;
-      },
+      profile: activity.profile,
       like_count: likeCountMap.get(activity.id) || 0,
       comment_count: commentCountMap.get(activity.id) || 0,
       is_liked: userLikes.includes(activity.id),

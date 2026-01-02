@@ -1,15 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyToken, createUserClient } from '../lib/supabase.js';
+import { verifyToken, createUserClient, SupabaseClientType } from '../lib/supabase.js';
 import type { User } from '@supabase/supabase-js';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.js';
 
 // Extend Express Request type
 declare global {
   namespace Express {
     interface Request {
       user?: User;
-      supabase?: SupabaseClient<Database>;
+      supabase?: SupabaseClientType;
       accessToken?: string;
     }
   }
@@ -79,4 +77,3 @@ export async function optionalAuth(
     next();
   }
 }
-

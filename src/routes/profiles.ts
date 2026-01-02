@@ -2,7 +2,6 @@ import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { requireAuth, optionalAuth } from '../middleware/auth.js';
 import { supabaseAdmin } from '../lib/supabase.js';
-import type { ProfileWithStats } from '../types/database.js';
 
 const router = Router();
 
@@ -112,7 +111,7 @@ router.get('/:usernameOrId', optionalAuth, async (req: Request, res: Response) =
       isFollowing = !!followData;
     }
 
-    const data: ProfileWithStats = {
+    const data = {
       ...profile,
       stats: {
         total_sessions: totalSessions,
