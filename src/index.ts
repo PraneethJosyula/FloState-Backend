@@ -48,6 +48,66 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// API Status & Info
+app.get('/api/status', (req, res) => {
+  res.json({
+    name: 'FloState API',
+    version: '1.0.0',
+    status: 'operational',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+    endpoints: {
+      auth: {
+        'POST /api/auth/signup': 'Create new account',
+        'POST /api/auth/signin': 'Sign in with email/password',
+        'POST /api/auth/signout': 'Sign out (requires auth)',
+        'GET /api/auth/me': 'Get current user (requires auth)',
+        'POST /api/auth/refresh': 'Refresh access token',
+        'POST /api/auth/reset-password': 'Send password reset email',
+      },
+      activities: {
+        'POST /api/activities': 'Create activity (requires auth)',
+        'GET /api/activities/feed': 'Get activity feed',
+        'GET /api/activities/user/:userId': 'Get user activities',
+        'GET /api/activities/:id': 'Get single activity',
+        'PATCH /api/activities/:id': 'Update activity (requires auth)',
+        'DELETE /api/activities/:id': 'Delete activity (requires auth)',
+      },
+      profiles: {
+        'GET /api/profiles/:usernameOrId': 'Get user profile',
+        'PATCH /api/profiles/me': 'Update own profile (requires auth)',
+        'POST /api/profiles/:userId/follow': 'Follow user (requires auth)',
+        'DELETE /api/profiles/:userId/follow': 'Unfollow user (requires auth)',
+        'GET /api/profiles/:userId/followers': 'Get followers',
+        'GET /api/profiles/:userId/following': 'Get following',
+        'GET /api/profiles/suggested/list': 'Get suggested users',
+        'GET /api/profiles/search/query': 'Search users',
+      },
+      interactions: {
+        'POST /api/interactions/activities/:activityId/like': 'Toggle like (requires auth)',
+        'GET /api/interactions/activities/:activityId/likes': 'Get likers',
+        'POST /api/interactions/activities/:activityId/comments': 'Add comment (requires auth)',
+        'GET /api/interactions/activities/:activityId/comments': 'Get comments',
+        'PATCH /api/interactions/comments/:commentId': 'Update comment (requires auth)',
+        'DELETE /api/interactions/comments/:commentId': 'Delete comment (requires auth)',
+        'POST /api/interactions/activities/:activityId/share': 'Record share',
+      },
+      storage: {
+        'POST /api/storage/evidence': 'Upload evidence image (requires auth)',
+        'POST /api/storage/avatar': 'Upload avatar (requires auth)',
+        'DELETE /api/storage/evidence/*': 'Delete evidence (requires auth)',
+        'GET /api/storage/files': 'List uploaded files (requires auth)',
+      },
+    },
+  });
+});
+
+// Root redirect to status
+app.get('/', (req, res) => {
+  res.redirect('/api/status');
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/activities', activitiesRoutes);
